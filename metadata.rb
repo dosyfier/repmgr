@@ -8,6 +8,6 @@ version '0.2.2'
 
 depends 'postgresql', '>= 2.0.0'
 depends 'build-essential'
-depends 'database'
+depends 'database', '>= 3.0.0'
 depends 'discovery', '>= 0.2.0'
 depends 'runit'
