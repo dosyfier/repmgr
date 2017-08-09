@@ -103,6 +103,12 @@ else
       retries 2
     end
 
+    # N.B. Required by repmgrd to work properly (and manage automatic failover)
+    execute 'register standby' do
+      user 'postgres'
+      command "repmgr -f #{node[:repmgr][:config_file_path]} --force standby register"
+    end
+
     service 'repmgrd-setup-start' do
       service_name 'repmgrd'
       action :start
