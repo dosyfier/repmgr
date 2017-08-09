@@ -85,11 +85,11 @@ else
 
     directory 'scrub postgresql data directory' do
       action :delete
+      owner 'postgres'
+      group 'postgres'
       recursive true
       path node[:postgresql][:config][:data_directory]
-      only_if do
-        File.directory?(node[:postgresql][:config][:data_directory])
-      end
+      notifies :create, 'directory[scrub postgresql data directory]', :immediately
     end
 
     execute 'clone standby' do
