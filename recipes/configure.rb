@@ -133,7 +133,7 @@ else
   
   if(master_node)
     node.default[:repmgr][:addressing][:master] = master_node[:repmgr][:addressing][:self]
-    file '/var/lib/postgresql/.ssh/known_hosts' do
+    file "#{node[:repmgr][:pg_home]}/.ssh/known_hosts" do
       content %x{ssh-keyscan #{node[:repmgr][:addressing][:master]}}
     end
   end

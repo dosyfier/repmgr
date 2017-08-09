@@ -1,12 +1,34 @@
 include_recipe 'repmgr'
 package 'rsync'
 
-link '/usr/local/bin/pg_ctl' do
-  to File.join(%x{pg_config --bindir}.strip, 'pg_ctl')
-  not_if do
-    File.exists?('/usr/local/bin/pg_ctl')
+
+# --- Add `pg_ctl` and repmgr executables to path
+
+case node['platform_family']
+when 'rhel', 'centos'
+  use_alternatives = node['platform_version'].to_f >= 6
+else
+  use_alternatives = true
+end
+
+if use_alternatives
+  %w(pg_ctl repmgr repmgrd).each do |pg_prgm|
+    execute "create/update alternative for #{pg_prgm}" do
+      command "alternatives --install /usr/bin/#{pg_prgm} pgsql-#{pg_prgm} /usr/pgsql-#{node['postgresql']['version']}/bin/#{pg_prgm} 1"
+      not_if "alternatives --display pgsql-#{pg_prgm} > /dev/null"
+    end
+  end
+else 
+  link '/usr/local/bin/pg_ctl' do
+    to File.join(%x{pg_config --bindir}.strip, 'pg_ctl')
+    not_if do
+      File.exists?('/usr/local/bin/pg_ctl')
+    end
   end
 end
+
+
+# --- Setup the node as either a master or a standby one
 
 if(node[:repmgr][:replication][:role] == 'master')
   # TODO: If changed master is detected should we force registration or
@@ -51,7 +73,7 @@ else
       "standby clone #{node[:repmgr][:addressing][:master]}"
 
     service 'postgresql-repmgr-stopper' do
-      service_name 'postgresql'
+      service_name node['postgresql']['server']['service_name']
       action :stop
     end
 
@@ -75,7 +97,7 @@ else
     end
     
     service 'postgresql-repmgr-starter' do
-      service_name 'postgresql'
+      service_name node['postgresql']['server']['service_name']
       action :start
       retries 2
     end
