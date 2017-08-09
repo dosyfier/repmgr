@@ -44,5 +44,5 @@ default[:repmgr][:replication][:hostname] = 'localhost'
 default[:repmgr][:replication][:common_environment] = true
 
 default[:repmgr][:init][:enable_monitoring] = false
-default[:repmgr][:init][:type] = :default # runit / upstart (soon)
+default[:repmgr][:init][:type] = :default # runit / upstart (soon) / systemd
 default[:repmgr][:config] = {}

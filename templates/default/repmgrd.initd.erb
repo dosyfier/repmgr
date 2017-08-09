@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #
 # Author: Chris Roberts (<chris@hw-ops.com>)
 #
@@ -11,13 +13,13 @@
 source /etc/rc.d/init.d/functions
 <% end -%>
 
-[ -x <%= @bin_path %> ] || exit 1
+[ -x <%= node[:repmgr][:repmgrd_bin] %> ] || exit 1
 
 case "$1" in
   start)
     echo "Starting repmgrd"
     <% if @el -%>
-    daemon <%= node[:repmgr][:repmgrd_bin] %>
+    daemon --user postgres <%= node[:repmgr][:repmgrd_bin] %> -f /etc/repmgr/repmgr.conf
     <% else -%>
     start-stop-daemon --start --quiet --chuid postgres --background --exec <%= node[:repmgr][:repmgrd_bin] %> -- -f /etc/repmgr/repmgr.conf <%= '--monitoring-history' if node[:repmgr][:init][:enable_monitoring] %>
     <% end -%>

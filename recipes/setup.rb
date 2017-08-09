@@ -53,6 +53,12 @@ if(node[:repmgr][:replication][:role] == 'master')
       master.to_s.include?(node[:repmgr][:addressing][:self])
     end
   end
+
+  service 'repmgrd-setup-start' do
+    service_name 'repmgrd'
+    action :disable
+  end
+    
 else
   master_node = discovery_search(
     'replication_role:master',
@@ -111,7 +117,7 @@ else
 
     service 'repmgrd-setup-start' do
       service_name 'repmgrd'
-      action :start
+      action [:enable, :start]
     end
     
     ruby_block 'confirm slave status' do

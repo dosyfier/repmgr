@@ -66,24 +66,3 @@ when 'rhel'
   # TODO
 end
 
-case node[:repmgr][:init][:type].to_s
-when 'runit'
-  include_recipe 'runit'
-  runit_service 'repmgrd' do
-    default_logger true
-    run_template_name 'repmgrd'
-  end
-when 'upstart'
-  raise "Not currently supported init type (upstart)"
-else
-  template '/etc/init.d/repmgrd' do
-    source 'repmgrd.initd.erb'
-    mode '0755'
-    variables(
-      :el => node.platform_family == 'rhel'
-    )
-    if(File.exists?('/etc/init.d/repmgrd'))
-      notifies :restart, 'service[repmgrd]'
-    end
-  end
-end
