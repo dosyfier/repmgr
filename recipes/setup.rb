@@ -16,7 +16,7 @@ if(node[:repmgr][:replication][:role] == 'master')
       raise 'Different node is already identified as PostgreSQL master!'
     end
     only_if do
-      output = %x{sudo -u postgres repmgr -f #{node[:repmgr][:config_file_path]} cluster show}
+      output = %x{su postgres -c 'repmgr -f #{node[:repmgr][:config_file_path]} cluster show'}
       master = output.split("\n").detect{|s| s.include?('master')}
       !master.to_s.empty? && !master.to_s.include?(node[:repmgr][:addressing][:self])
     end
@@ -26,7 +26,7 @@ if(node[:repmgr][:replication][:role] == 'master')
     command "#{node[:repmgr][:repmgr_bin]} -f #{node[:repmgr][:config_file_path]} master register"
     user 'postgres'
     not_if do
-      output = %x{sudo -u postgres #{node[:repmgr][:repmgr_bin]} -f #{node[:repmgr][:config_file_path]} cluster show}
+      output = %x{su postgres -c '#{node[:repmgr][:repmgr_bin]} -f #{node[:repmgr][:config_file_path]} cluster show'}
       master = output.split("\n").detect{|s| s.include?('master')}
       master.to_s.include?(node[:repmgr][:addressing][:self])
     end
@@ -88,7 +88,7 @@ else
     ruby_block 'confirm slave status' do
       block do
         Chef::Log.fatal "Slaving failed. Unable to detect self as standby: #{node[:repmgr][:addressing][:self]}"
-        Chef::Log.fatal "OUTPUT: #{%x{sudo -u postgres repmgr -f #{node[:repmgr][:config_file_path]} cluster show}}"
+        Chef::Log.fatal "OUTPUT: #{%x{su postgres -c 'repmgr -f #{node[:repmgr][:config_file_path]} cluster show'}}"
         recovery_file = File.join(node[:postgresql][:config][:data_directory], 'recovery.conf')
         if(File.exists?(recovery_file))
           FileUtils.rm recovery_file
@@ -96,7 +96,7 @@ else
         raise 'Failed to properly setup slaving!'
       end
       not_if do
-        output = %x{sudo -u postgres repmgr -f #{node[:repmgr][:config_file_path]} cluster show}
+        output = %x{su postgres -c 'repmgr -f #{node[:repmgr][:config_file_path]} cluster show'}
         output.split("\n").detect{|s| s.include?('standby') && s.include?(node[:repmgr][:addressing][:self])}
       end
       action :nothing
