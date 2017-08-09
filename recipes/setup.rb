@@ -66,6 +66,7 @@ else
     # build our command in a string because it's long
     node.default[:repmgr][:addressing][:master] = master_node[:repmgr][:addressing][:self]
     clone_cmd = "#{node[:repmgr][:repmgr_bin]} " << 
+      "-f #{node[:repmgr][:config_file_path]} " <<
       "-D #{node[:postgresql][:config][:data_directory]} " <<
       "-p #{node[:postgresql][:config][:port]} -U #{node[:repmgr][:replication][:user]} " <<
       "-R #{node[:repmgr][:system_user]} -d #{node[:repmgr][:replication][:database]} " <<
