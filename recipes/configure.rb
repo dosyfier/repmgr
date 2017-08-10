@@ -145,7 +145,15 @@ node.set[:postgresql][:config][:max_wal_senders] = node[:repmgr][:replication][:
 node.set[:postgresql][:config][:wal_keep_segments] = node[:repmgr][:replication][:keep_segments]
 
 # HBA
-node.default[:postgresql][:pg_hba] = [
-  {:type => 'hostssl', :db => node[:repmgr][:replication][:database], :user => node[:repmgr][:replication][:user], :addr => node[:repmgr][:master_allow_from], :method => 'md5'},
-  {:type => 'hostssl', :db => 'replication', :user => node[:repmgr][:replication][:user], :addr => node[:repmgr][:master_allow_from], :method => 'md5'}
-] + node[:postgresql][:pg_hba]
+if node['postgresql']['config']['ssl']
+  node.default[:postgresql][:pg_hba] = [
+    {:type => 'hostssl', :db => node[:repmgr][:replication][:database], :user => node[:repmgr][:replication][:user], :addr => node[:repmgr][:master_allow_from], :method => 'md5'},
+    {:type => 'hostssl', :db => 'replication', :user => node[:repmgr][:replication][:user], :addr => node[:repmgr][:master_allow_from], :method => 'md5'}
+  ] + node[:postgresql][:pg_hba]
+else
+  node.default[:postgresql][:pg_hba] = [
+    {:type => 'host', :db => node[:repmgr][:replication][:database], :user => node[:repmgr][:replication][:user], :addr => node[:repmgr][:master_allow_from], :method => 'trust'},
+    {:type => 'host', :db => 'replication', :user => node[:repmgr][:replication][:user], :addr => node[:repmgr][:master_allow_from], :method => 'trust'}
+  ] + node[:postgresql][:pg_hba]
+end
+
