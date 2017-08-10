@@ -43,6 +43,7 @@ default[:repmgr][:replication][:database] = 'replication_db'
 default[:repmgr][:replication][:standby_feedback] = true
 default[:repmgr][:replication][:hostname] = 'localhost'
 default[:repmgr][:replication][:common_environment] = true
+default[:repmgr][:log_file] = '/var/log/repmgr/repmgr.log'
 
 default[:repmgr][:init][:enable_monitoring] = false
 default[:repmgr][:init][:type] = :default # runit / upstart (soon) / systemd

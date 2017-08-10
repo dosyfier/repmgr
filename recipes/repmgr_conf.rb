@@ -21,3 +21,16 @@ node.default[:repmgr][:config][:promote_command] = "repmgr standby promote -f #{
 node.default[:repmgr][:config][:follow_command] = "repmgr standby follow -f #{node[:repmgr][:config_file_path]} -W"
 node.default[:repmgr][:config][:loglevel] = 'NOTICE'
 node.default[:repmgr][:config][:logfacility] = 'STDERR'
+
+# This setting is required by switchover functionality
+case node['platform_family']
+when 'rhel', 'centos'
+  node.default[:repmgr][:config][:pg_bindir] = "/usr/pgsql-#{node['postgresql']['version']}/bin"
+else
+  node.default[:repmgr][:config][:pg_bindir] = "/usr/bin"
+end
+
+# So that switchover operations run correctly, a log file option must be set on any remote pg_ctl launch
+# See: https://github.com/2ndQuadrant/repmgr#caveats
+node.default[:repmgr][:config][:pg_ctl_options] = "-l #{node[:repmgr][:log_file]}"
+
