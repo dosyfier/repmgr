@@ -25,6 +25,7 @@ default[:repmgr][:cluster_name] = 'an_cluster'
 default[:repmgr][:system_user] = 'postgres'
 default[:repmgr][:ssh_ignore_hosts_enabled] = false
 default[:repmgr][:ssh_ignore_hosts] = '192.168.0.*'
+default[:repmgr][:ssh_trusted_host] = 'db1.domain.com'
 default[:repmgr][:master_allow_from] = '0.0.0.0/0'
 default[:repmgr][:pg_home] = '/var/lib/postgresql'
 default[:repmgr][:readonly_slave] = true

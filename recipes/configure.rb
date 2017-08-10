@@ -61,7 +61,7 @@ directory File.join(node[:repmgr][:pg_home], '.ssh') do
 end
 
 file File.join(node[:repmgr][:pg_home], '.ssh/authorized_keys') do
-  content key_bag['public_key']
+  content "ssh-rsa #{key_bag['public_key']} postgres@#{node[:repmgr][:ssh_trusted_host]}"
   mode 0644
   owner node[:repmgr][:system_user]
   group node[:repmgr][:system_user]
