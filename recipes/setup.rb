@@ -115,11 +115,6 @@ else
       command "repmgr -f #{node[:repmgr][:config_file_path]} --force --wait-sync=60 standby register"
     end
 
-    service 'repmgrd-setup-start' do
-      service_name 'repmgrd'
-      action [:enable, :start]
-    end
-    
     ruby_block 'confirm slave status' do
       block do
         Chef::Log.fatal "Slaving failed. Unable to detect self as standby: #{node[:repmgr][:addressing][:self]}"
@@ -143,6 +138,11 @@ else
     
   end
 
+  service 'repmgrd-setup-start' do
+    service_name 'repmgrd'
+    action [:enable, :start]
+  end
+    
   # add recovery manage here
 
   template File.join(node[:postgresql][:config][:data_directory], 'recovery.conf') do
