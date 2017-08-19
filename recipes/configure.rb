@@ -143,6 +143,7 @@ node.set[:postgresql][:config][:archive_command] = node[:repmgr][:replication][:
 node.set[:postgresql][:config][:archive_timeout] = node[:repmgr][:replication][:archive_timeout]
 node.set[:postgresql][:config][:max_wal_senders] = node[:repmgr][:replication][:max_senders]
 node.set[:postgresql][:config][:wal_keep_segments] = node[:repmgr][:replication][:keep_segments]
+node.set[:postgresql][:config][:shared_preload_libraries] = 'repmgr_funcs'
 
 # HBA
 if node['postgresql']['config']['ssl']
